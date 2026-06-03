@@ -1,0 +1,35 @@
+# Build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# Logs
+*.log
+
+# ASP.NET
+appsettings.Development.json
+
+# EF Core
+*.db
+
+# Publish
+publish/
+
+# Temp
+temp/
+tmp/
+
+# NuGet
+packages/
+*.nupkg
+
+# OS
+.DS_Store
+Thumbs.db
