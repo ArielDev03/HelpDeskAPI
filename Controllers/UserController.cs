@@ -1,7 +1,7 @@
 ﻿using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.User;
 using HelpDeskAPI.Interfaces;
-using HelpDeskAPI.Models.User;
+using HelpDeskAPI.Models.Users;
 using HelpDeskAPI.Services.User;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

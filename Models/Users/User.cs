@@ -1,4 +1,7 @@
-﻿namespace HelpDeskAPI.Models.User
+﻿using HelpDeskAPI.Models.Tickets;
+
+
+namespace HelpDeskAPI.Models.Users
 {
     public class User
     {
@@ -10,7 +13,11 @@
         public string Direccion { get; set; } = string.Empty;
         public string? Ciudad { get; set; } //opcional
 
+        public ICollection<Ticket> TicketsCreados { get; set; }
+        = new List<Ticket>();
 
+        public ICollection<Ticket> TicketsAsignados { get; set; }
+        = new List<Ticket>();
 
     }
 }

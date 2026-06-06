@@ -3,7 +3,7 @@ using HelpDeskAPI.DTOs.User;
 using HelpDeskAPI.Exceptions;
 using HelpDeskAPI.Interfaces;
 using HelpDeskAPI.Mappers;
-using HelpDeskAPI.Models.User;
+using HelpDeskAPI.Models.Users;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

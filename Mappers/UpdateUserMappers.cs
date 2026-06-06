@@ -1,5 +1,5 @@
 ﻿using HelpDeskAPI.DTOs.User;
-using HelpDeskAPI.Models.User;
+using HelpDeskAPI.Models.Users;
 
 namespace HelpDeskAPI.Mappers
 {
