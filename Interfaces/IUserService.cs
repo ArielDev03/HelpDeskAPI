@@ -1,6 +1,4 @@
 ﻿using HelpDeskAPI.DTOs.User;
-using System.Diagnostics.Contracts;
-using static System.Net.WebRequestMethods;
 
 namespace HelpDeskAPI.Interfaces
 {

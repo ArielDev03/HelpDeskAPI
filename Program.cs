@@ -1,6 +1,7 @@
 using HelpDeskAPI.Data;
 using HelpDeskAPI.Interfaces;
 using HelpDeskAPI.Middlewares;
+using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 // asi se usa sin interfaz, cuando controller llama directamente a service
 //builder.Services.AddScoped<UserService>();
