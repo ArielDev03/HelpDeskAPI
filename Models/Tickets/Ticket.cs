@@ -13,13 +13,13 @@ namespace HelpDeskAPI.Models.Tickets
 
         public string Descripcion { get; set; } = string.Empty;
 
-        public int TicketStatusId { get; set; }
+        public int EstadoId { get; set; }
 
-        public TicketStatus TicketStatus { get; set; } = null!;
+        public TicketStatus Estado { get; set; } = null!;
 
-        public int TicketPriorityId { get; set; }
+        public int PrioridadId { get; set; }
 
-        public TicketPriority TicketPriority { get; set; } = null!;
+        public TicketPriority Prioridad { get; set; } = null!;
 
         public DateTime FechaCreacion { get; set; }
             = DateTime.UtcNow;
@@ -32,7 +32,7 @@ namespace HelpDeskAPI.Models.Tickets
         // Usuario asignado
         public int? UsuarioAsignadoId { get; set; }
 
-        public User? UsuarioAsignado { get; set; }
+        public User? UsuarioAsignado { get; set; } 
 
         public ICollection<TicketComment> Comentarios { get; set; }
             = new List<TicketComment>();

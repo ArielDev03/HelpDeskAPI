@@ -59,13 +59,13 @@ namespace HelpDeskAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EstadoId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TicketPriorityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TicketStatusId")
+                    b.Property<int>("PrioridadId")
                         .HasColumnType("int");
 
                     b.Property<string>("Titulo")
@@ -80,9 +80,9 @@ namespace HelpDeskAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TicketPriorityId");
+                    b.HasIndex("EstadoId");
 
-                    b.HasIndex("TicketStatusId");
+                    b.HasIndex("PrioridadId");
 
                     b.HasIndex("UsuarioAsignadoId");
 
@@ -217,15 +217,15 @@ namespace HelpDeskAPI.Migrations
 
             modelBuilder.Entity("HelpDeskAPI.Models.Tickets.Ticket", b =>
                 {
-                    b.HasOne("HelpDeskAPI.Models.TicketsPriority.TicketPriority", "TicketPriority")
+                    b.HasOne("HelpDeskAPI.Models.TicketsStatus.TicketStatus", "Estado")
                         .WithMany()
-                        .HasForeignKey("TicketPriorityId")
+                        .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HelpDeskAPI.Models.TicketsStatus.TicketStatus", "TicketStatus")
+                    b.HasOne("HelpDeskAPI.Models.TicketsPriority.TicketPriority", "Prioridad")
                         .WithMany()
-                        .HasForeignKey("TicketStatusId")
+                        .HasForeignKey("PrioridadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -240,9 +240,9 @@ namespace HelpDeskAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("TicketPriority");
+                    b.Navigation("Estado");
 
-                    b.Navigation("TicketStatus");
+                    b.Navigation("Prioridad");
 
                     b.Navigation("Usuario");
 

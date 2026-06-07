@@ -40,14 +40,14 @@ namespace HelpDeskAPI.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Ticket>()
-                .HasOne(t => t.TicketStatus)
+                .HasOne(t => t.Estado)
                 .WithMany()
-                .HasForeignKey(t => t.TicketStatusId);
+                .HasForeignKey(t => t.EstadoId);
 
             modelBuilder.Entity<Ticket>()
-                .HasOne(t => t.TicketPriority)
+                .HasOne(t => t.Prioridad)
                 .WithMany()
-                .HasForeignKey(t => t.TicketPriorityId);
+                .HasForeignKey(t => t.PrioridadId);
 
             modelBuilder.Entity<TicketComment>()
                 .HasOne(c => c.Ticket)
