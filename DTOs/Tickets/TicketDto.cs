@@ -12,7 +12,9 @@ namespace HelpDeskAPI.DTOs.Tickets
 
         public string Prioridad { get; set; } = string.Empty;
 
-        public DateTime FechaCreacion { get; set; } 
+        public DateTime FechaCreacion { get; set; }
+
+         public string Usuario { get; set; } = string.Empty;
 
         public string? UsuarioAsignado { get; set; } 
     }

@@ -4,12 +4,18 @@ using HelpDeskAPI.Middlewares;
 using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.User;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
-
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File(
+        "logs/helpdesk-api-.txt",
+        rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(

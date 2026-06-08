@@ -1,4 +1,5 @@
-﻿using HelpDeskAPI.Interfaces;
+﻿using HelpDeskAPI.DTOs.Tickets;
+using HelpDeskAPI.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Formats.Asn1;
@@ -11,6 +12,7 @@ namespace HelpDeskAPI.Controllers
     public class TicketController : ControllerBase
     {
         private readonly ITicketService _ticketService;
+
         public TicketController(ITicketService ticketService)
         {
             _ticketService = ticketService;
@@ -31,6 +33,20 @@ namespace HelpDeskAPI.Controllers
             var ticket = await _ticketService.GetTicketById(id);
 
             return Ok(ticket);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTicket(CreateTicketDto ticketDto)
+        {
+            var ticket = await _ticketService.CreateTicket(ticketDto);
+
+            // return Ok(ticket);
+
+            return CreatedAtAction(
+                nameof(GetTicketById),
+                new { id = ticket.Id },
+                ticket);
 
         }
     }

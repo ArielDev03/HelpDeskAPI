@@ -9,5 +9,7 @@ namespace HelpDeskAPI.Interfaces
         Task<List<TicketDto>> GetAllTickets();
 
         Task<TicketDetailDto> GetTicketById(int id);
+
+        Task<TicketDto> CreateTicket(CreateTicketDto dto);
     }
 }

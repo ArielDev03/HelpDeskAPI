@@ -15,6 +15,7 @@ namespace HelpDeskAPI.Mappers.Tickets
                 Estado = ticketModel.Estado.Nombre,
                 Prioridad = ticketModel.Prioridad.Nombre,
                 FechaCreacion = ticketModel.FechaCreacion,
+                Usuario = ticketModel.Usuario.Name,
                 UsuarioAsignado = ticketModel.UsuarioAsignado?.Name ?? string.Empty
             };
         }
