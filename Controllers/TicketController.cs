@@ -41,13 +41,27 @@ namespace HelpDeskAPI.Controllers
         {
             var ticket = await _ticketService.CreateTicket(ticketDto);
 
-            // return Ok(ticket);
-
             return CreatedAtAction(
                 nameof(GetTicketById),
                 new { id = ticket.Id },
                 ticket);
 
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTicket(UpdateTicketDto tDto, int id)
+        {
+             await _ticketService.UpdateTicket(tDto, id);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTicket([FromRoute] int id)
+        {
+            await _ticketService.DeleteTicket(id);
+
+            return NoContent();
         }
     }
 }

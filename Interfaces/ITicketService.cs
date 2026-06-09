@@ -7,9 +7,10 @@ namespace HelpDeskAPI.Interfaces
     public interface ITicketService
     {
         Task<List<TicketDto>> GetAllTickets();
-
         Task<TicketDetailDto> GetTicketById(int id);
-
         Task<TicketDto> CreateTicket(CreateTicketDto dto);
+        Task UpdateTicket(UpdateTicketDto dto, int id);
+
+        Task DeleteTicket(int id);
     }
 }
