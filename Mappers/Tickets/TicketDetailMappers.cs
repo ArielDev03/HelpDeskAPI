@@ -21,8 +21,8 @@ namespace HelpDeskAPI.Mappers.Tickets
                 FechaCreacion = ticketModel.FechaCreacion,
                 UsuarioId = ticketModel.Usuario.Id,
                 Usuario = ticketModel.Usuario.Name,
-                UsuarioAsignadoId = ticketModel.Usuario?.Id,
-                UsuarioAsignado = ticketModel.Usuario?.Name ?? string.Empty,
+                UsuarioAsignadoId = ticketModel.UsuarioAsignado?.Id,
+                UsuarioAsignado = ticketModel.UsuarioAsignado?.Name ?? string.Empty,
                 Comentarios = ticketModel.Comentarios
                 .Select(c => c.ToTicketCommentDto())
                 .ToList()

@@ -12,16 +12,24 @@ using Microsoft.EntityFrameworkCore;
 namespace HelpDeskAPI.Services.Tickets
 {
     public class TicketService : ITicketService
+
     {
         private readonly AppDbContext _context;
         private readonly ILogger<TicketService> _logger;
-        private readonly IValidator<UpdateTicketDto> _validator;
+        private readonly IValidator<CreateTicketDto> _createValidator;
+        private readonly IValidator<UpdateTicketDto> _updateValidator;
+        
 
-        public TicketService(AppDbContext context, ILogger<TicketService> logger, IValidator<UpdateTicketDto> validator)
+        public TicketService(AppDbContext context, 
+            ILogger<TicketService> logger,
+            IValidator<UpdateTicketDto> updateValidator,
+            IValidator<CreateTicketDto> createValidator)
+
         {
             _context = context;
             _logger = logger;
-            _validator = validator;
+            _updateValidator = updateValidator;
+            _createValidator = createValidator;
         }
 
         public async Task<List<TicketDto>> GetAllTickets()
@@ -67,7 +75,16 @@ namespace HelpDeskAPI.Services.Tickets
 
         public async Task<TicketDto> CreateTicket(CreateTicketDto ticketDto)
         {
+
             _logger.LogInformation("Creando ticket {UsuarioId}", ticketDto.UsuarioId);
+
+            var result = await _createValidator.ValidateAsync(ticketDto);
+
+            if (!result.IsValid)
+            {
+                throw new BusinessException(
+                    result.Errors.First().ErrorMessage);
+            }
 
             var user = await _context.Users.FindAsync(ticketDto.UsuarioId);
 
@@ -94,12 +111,11 @@ namespace HelpDeskAPI.Services.Tickets
             return ticketDb.ToTicketDto();
         }
 
-
         public async Task UpdateTicket(UpdateTicketDto ticketDto, int id)
         {
             _logger.LogInformation("Actualizando ticket {id}", id);
 
-            var validationResult = await _validator.ValidateAsync(ticketDto);
+            var validationResult = await _updateValidator.ValidateAsync(ticketDto);
 
             if (!validationResult.IsValid)
             {

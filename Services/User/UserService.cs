@@ -1,4 +1,6 @@
-﻿using HelpDeskAPI.Data;
+﻿using FluentValidation;
+using HelpDeskAPI.Data;
+using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.DTOs.User;
 using HelpDeskAPI.Exceptions;
 using HelpDeskAPI.Interfaces;
@@ -15,12 +17,18 @@ namespace HelpDeskAPI.Services.User
     public class UserService : IUserService
     {
         private readonly AppDbContext _context;
-        
+        private readonly IValidator<CreateUserDto> _createValidator;
+        private readonly IValidator<UpdateUserDto> _updateValidator;
 
-        public UserService(AppDbContext context)
+
+        public UserService(AppDbContext context, 
+            IValidator<UpdateUserDto> updateValidator,
+            IValidator<CreateUserDto> createValidator)
         {
             _context = context;
-
+            _updateValidator = updateValidator;
+            _createValidator = createValidator;
+       
         }
 
         public async Task<List<UserDto>> GetAllUsers() 
@@ -51,6 +59,14 @@ namespace HelpDeskAPI.Services.User
         public async Task<UserDto> CreateUser(CreateUserDto userDto)
         {
 
+            var result = await _createValidator.ValidateAsync(userDto);
+
+            if (!result.IsValid)
+            {
+                throw new BusinessException(
+                    result.Errors.First().ErrorMessage);
+            }
+
             var exists = await _context.Users.AnyAsync(u => u.Email == userDto.Email);
 
             if (exists)
@@ -68,6 +84,14 @@ namespace HelpDeskAPI.Services.User
 
         public async Task<UserDto> UpdateUser(int id, UpdateUserDto userDto)
         {
+
+            var result = await _updateValidator.ValidateAsync(userDto);
+
+            if (!result.IsValid)
+            {
+                throw new BusinessException(
+                    result.Errors.First().ErrorMessage);
+            }
 
             var user = await _context.Users.FindAsync(id);
 

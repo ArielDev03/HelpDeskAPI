@@ -10,7 +10,6 @@ namespace HelpDeskAPI.Interfaces
         Task<TicketDetailDto> GetTicketById(int id);
         Task<TicketDto> CreateTicket(CreateTicketDto dto);
         Task UpdateTicket(UpdateTicketDto dto, int id);
-
         Task DeleteTicket(int id);
     }
 }
