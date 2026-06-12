@@ -4,7 +4,16 @@ API REST desarrollada con ASP.NET Core Web API para la gestión de tickets de so
 
 ---
 
-# Características
+## Características Técnicas
+✓ DTOs
+✓ Mappers
+✓ FluentValidation
+✓ Logging
+✓ Middleware Global de Excepciones
+✓ Dependency Injection
+✓ Entity Framework Core
+✓ Seed Data
+✓ Repository Pattern (próximamente)
 
 ## Gestión de Usuarios
 
