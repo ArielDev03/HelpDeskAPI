@@ -1,10 +1,12 @@
 # HelpDesk API
 
-API REST desarrollada con ASP.NET Core Web API para la gestión de tickets de soporte técnico. El proyecto está diseñado siguiendo buenas prácticas de arquitectura backend, utilizando Entity Framework Core para el acceso a datos y SQL Server como motor de base de datos.
+API REST desarrollada con ASP.NET Core Web API para la gestión de tickets de soporte técnico. El proyecto implementa una arquitectura por capas utilizando DTOs, servicios, validaciones, manejo global de excepciones y Entity Framework Core para el acceso a datos.
 
-## Características
+---
 
-### Gestión de Usuarios
+# Características
+
+## Gestión de Usuarios
 
 * Crear usuarios.
 * Obtener listado de usuarios.
@@ -13,26 +15,38 @@ API REST desarrollada con ASP.NET Core Web API para la gestión de tickets de so
 * Eliminar usuarios.
 * Validación de correos duplicados.
 
-### Gestión de Tickets
+## Gestión de Tickets
 
-* Creación de tickets de soporte.
+* Crear tickets de soporte.
+* Obtener listado de tickets.
+* Obtener ticket por ID.
+* Actualizar tickets.
 * Asociación de tickets con usuarios.
-* Catálogo de estados de ticket.
-* Catálogo de prioridades de ticket.
-* Soporte para asignación de tickets a usuarios.
+* Asignación de tickets a usuarios.
+* Gestión de estados y prioridades.
 
-### Gestión de Comentarios
+## Gestión de Comentarios
 
 * Agregar comentarios a tickets.
-* Relación entre tickets y comentarios.
-* Registro de fecha de creación.
+* Obtener comentarios asociados a un ticket.
+* Asociación de comentarios con usuarios.
+* Registro automático de fecha de creación.
 
-### Base de Datos
+## Catálogos
 
-* Entity Framework Core.
-* SQL Server.
-* Migraciones para control de versiones de la base de datos.
-* Seed Data para catálogos iniciales.
+### Estados de Ticket
+
+* Abierto
+* En Proceso
+* Resuelto
+* Cerrado
+
+### Prioridades de Ticket
+
+* Baja
+* Media
+* Alta
+* Crítica
 
 ---
 
@@ -44,7 +58,102 @@ API REST desarrollada con ASP.NET Core Web API para la gestión de tickets de so
 * Entity Framework Core Tools
 * SQL Server
 * Swagger / Swashbuckle
+* FluentValidation
 * C#
+
+---
+
+# Arquitectura Implementada
+
+```text
+Controllers
+    ↓
+Interfaces
+    ↓
+Services
+    ↓
+Entity Framework Core
+    ↓
+SQL Server
+```
+
+### Componentes utilizados
+
+* Controllers
+* DTOs
+* Services
+* Interfaces
+* Mappers
+* Middleware Global de Excepciones
+* Logging
+* Dependency Injection
+* Entity Framework Core
+
+---
+
+# Validaciones
+
+El proyecto utiliza FluentValidation para la validación de datos de entrada.
+
+Validaciones implementadas:
+
+* Campos obligatorios.
+* Longitudes máximas.
+* Formato válido de correo electrónico.
+* Rangos numéricos.
+* Validación de entidades relacionadas.
+* Mensajes personalizados de validación.
+
+FluentValidation se utiliza en lugar de Data Annotations para mantener las reglas de negocio separadas de los DTOs.
+
+---
+
+# Logging
+
+Se implementa logging mediante ILogger para registrar:
+
+* Operaciones realizadas.
+* Creación de registros.
+* Actualizaciones.
+* Advertencias.
+* Errores.
+* Eventos importantes de la aplicación.
+
+Los registros son visibles en la consola durante la ejecución de la API.
+
+---
+
+# Manejo Global de Excepciones
+
+La API utiliza un Middleware Global de Excepciones para centralizar el manejo de errores.
+
+Excepciones personalizadas implementadas:
+
+* NotFoundException
+* BusinessException
+
+Respuestas HTTP manejadas:
+
+* 400 Bad Request
+* 404 Not Found
+* 500 Internal Server Error
+
+---
+
+# Base de Datos
+
+* SQL Server
+* Entity Framework Core
+* Migraciones
+* Seed Data
+
+Entidades principales:
+
+* Users
+* Tickets
+* TicketComments
+* TicketStatuses
+* TicketPriorities
 
 ---
 
@@ -56,13 +165,13 @@ Antes de ejecutar el proyecto asegúrate de tener instalado:
 * SQL Server
 * Entity Framework Core Tools
 
-Verificar instalación de .NET:
+Verificar instalación:
 
 ```bash
 dotnet --version
 ```
 
-Instalar EF Tools (si no está instalado):
+Instalar EF Tools:
 
 ```bash
 dotnet tool install --global dotnet-ef
@@ -90,9 +199,17 @@ cd HelpDeskAPI
 
 ---
 
+# Restaurar Dependencias
+
+```bash
+dotnet restore
+```
+
+---
+
 # Configuración de Base de Datos
 
-Configurar la cadena de conexión en:
+Modificar la cadena de conexión en:
 
 ```json
 appsettings.json
@@ -110,17 +227,7 @@ Ejemplo:
 
 ---
 
-# Restaurar Dependencias
-
-```bash
-dotnet restore
-```
-
----
-
 # Aplicar Migraciones
-
-Crear la base de datos y aplicar las migraciones existentes:
 
 ```bash
 dotnet ef database update
@@ -130,7 +237,7 @@ Este comando:
 
 * Crea la base de datos si no existe.
 * Crea las tablas necesarias.
-* Inserta los datos iniciales configurados mediante Seed Data.
+* Inserta los datos iniciales mediante Seed Data.
 
 ---
 
@@ -150,9 +257,9 @@ F5
 
 # Documentación de la API
 
-Swagger se encuentra habilitado para facilitar la exploración y prueba de los endpoints.
+Swagger se encuentra habilitado para la documentación y pruebas de los endpoints.
 
-Una vez iniciada la aplicación, acceder a:
+Acceder a:
 
 ```text
 https://localhost:<PUERTO>/swagger
@@ -168,15 +275,18 @@ HelpDeskAPI
 ├── Controllers
 ├── DTOs
 ├── Data
+├── Interfaces
+├── Services
+├── Validators
 ├── Mappers
+├── Middleware
 ├── Models
 │   ├── Users
 │   ├── Tickets
 │   ├── TicketComments
-│   ├── TicketsStatus
-│   └── TicketsPriority
+│   ├── TicketStatuses
+│   └── TicketPriorities
 │
-├── Services
 ├── Migrations
 ├── Program.cs
 └── appsettings.json
@@ -184,51 +294,43 @@ HelpDeskAPI
 
 ---
 
-# Catálogos Iniciales
-
-## Estados de Ticket
-
-* Abierto
-* En Proceso
-* Resuelto
-* Cerrado
-
-## Prioridades de Ticket
-
-* Baja
-* Media
-* Alta
-* Crítica
-
-Estos registros se generan automáticamente mediante Seed Data al ejecutar las migraciones.
-
----
-
 # Estado Actual del Proyecto
 
 Actualmente el proyecto cuenta con:
 
-* CRUD de usuarios.
-* Modelado de tickets.
-* Modelado de comentarios.
-* Catálogos de estados y prioridades.
-* Relaciones configuradas mediante Entity Framework Core.
+* CRUD completo de usuarios.
+* Gestión de tickets.
+* Gestión de comentarios de tickets.
+* Catálogo de estados.
+* Catálogo de prioridades.
+* DTOs y Mappers.
+* FluentValidation.
+* Middleware Global de Excepciones.
+* Logging.
+* Dependency Injection.
+* Entity Framework Core.
 * Migraciones y Seed Data.
 
-## Próximas Mejoras
+---
 
+# Próximas Mejoras
+
+* Repository Pattern.
+* AutoMapper.
 * Autenticación JWT.
 * Roles y permisos.
-* Asignación de tickets.
+* Refresh Tokens.
 * Historial de cambios.
 * Adjuntos de archivos.
 * Auditoría de acciones.
 * Notificaciones.
-* Validaciones avanzadas.
+* Paginación.
+* Filtros avanzados.
+* Docker.
 * Pruebas unitarias e integración.
 
 ---
 
 # Autor
 
-Proyecto desarrollado con fines de aprendizaje y práctica de desarrollo backend utilizando ASP.NET Core y Entity Framework Core.
+Proyecto desarrollado con fines de aprendizaje y práctica de desarrollo backend utilizando ASP.NET Core, Entity Framework Core y SQL Server.
