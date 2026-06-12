@@ -1,6 +1,6 @@
 using FluentValidation;
 using HelpDeskAPI.Data;
-using HelpDeskAPI.Interfaces;
+using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Middlewares;
 using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.TicketsComments;

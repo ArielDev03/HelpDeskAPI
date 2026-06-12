@@ -1,5 +1,5 @@
 ﻿using HelpDeskAPI.DTOs.Tickets;
-using HelpDeskAPI.Interfaces;
+using HelpDeskAPI.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Formats.Asn1;

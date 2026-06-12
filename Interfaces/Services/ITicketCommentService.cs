@@ -1,7 +1,7 @@
 ﻿using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.DTOs.TicketsComments;
 
-namespace HelpDeskAPI.Interfaces
+namespace HelpDeskAPI.Interfaces.Services
 {
     public interface ITicketCommentService
     {

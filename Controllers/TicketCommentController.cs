@@ -1,5 +1,5 @@
 ﻿using HelpDeskAPI.DTOs.TicketsComments;
-using HelpDeskAPI.Interfaces;
+using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Models.Tickets;
 using HelpDeskAPI.Services.Tickets;
 using Microsoft.AspNetCore.Http;

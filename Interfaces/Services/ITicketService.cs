@@ -2,7 +2,7 @@
 using HelpDeskAPI.DTOs.User;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HelpDeskAPI.Interfaces
+namespace HelpDeskAPI.Interfaces.Services
 {
     public interface ITicketService
     {

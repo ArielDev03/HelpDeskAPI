@@ -3,7 +3,7 @@ using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.DTOs.TicketsComments;
 using HelpDeskAPI.Exceptions;
-using HelpDeskAPI.Interfaces;
+using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Mappers.TicketsComments;
 using HelpDeskAPI.Models.TicketComments;
 using Microsoft.EntityFrameworkCore;

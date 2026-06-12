@@ -2,7 +2,7 @@
 using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.Exceptions;
-using HelpDeskAPI.Interfaces;
+using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Mappers.Tickets;
 using HelpDeskAPI.Models.Tickets;
 using HelpDeskAPI.Models.Users;

@@ -1,6 +1,6 @@
 ﻿using HelpDeskAPI.DTOs.User;
 
-namespace HelpDeskAPI.Interfaces
+namespace HelpDeskAPI.Interfaces.Services
 {
 
     // Controller(HTTP)
