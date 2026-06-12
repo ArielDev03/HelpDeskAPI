@@ -4,6 +4,8 @@ using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Middlewares;
 using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.TicketsComments;
+using HelpDeskAPI.Services.TicketsPriority;
+using HelpDeskAPI.Services.TicketStatus;
 using HelpDeskAPI.Services.User;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -41,6 +43,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketCommentService, TicketCommentService>();
+builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
+builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
 
 // asi se usa sin interfaz, cuando controller llama directamente a service
 //builder.Services.AddScoped<UserService>();
