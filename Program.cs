@@ -1,11 +1,12 @@
+using FluentValidation;
 using HelpDeskAPI.Data;
 using HelpDeskAPI.Interfaces;
 using HelpDeskAPI.Middlewares;
 using HelpDeskAPI.Services.Tickets;
+using HelpDeskAPI.Services.TicketsComments;
 using HelpDeskAPI.Services.User;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using FluentValidation;
 
 
 Log.Logger = new LoggerConfiguration()
@@ -36,8 +37,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Interfaces
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketCommentService, TicketCommentService>();
 
 // asi se usa sin interfaz, cuando controller llama directamente a service
 //builder.Services.AddScoped<UserService>();
