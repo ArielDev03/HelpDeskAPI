@@ -3,9 +3,11 @@ using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.DTOs.User;
 using HelpDeskAPI.Exceptions;
+using HelpDeskAPI.Interfaces.Repositories;
 using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Mappers;
 using HelpDeskAPI.Models.Users;
+using HelpDeskAPI.Services.TicketsComments;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -17,42 +19,47 @@ namespace HelpDeskAPI.Services.User
     public class UserService : IUserService
     {
         private readonly AppDbContext _context;
+        private readonly IUserRepository _userRepository;
         private readonly IValidator<CreateUserDto> _createValidator;
         private readonly IValidator<UpdateUserDto> _updateValidator;
+        private readonly ILogger<UserService> _logger;
 
 
-        public UserService(AppDbContext context, 
+        public UserService(AppDbContext context,IUserRepository userRepository,
             IValidator<UpdateUserDto> updateValidator,
-            IValidator<CreateUserDto> createValidator)
+            IValidator<CreateUserDto> createValidator,
+            ILogger<UserService> logger)
+            
         {
             _context = context;
+            _userRepository = userRepository;
             _updateValidator = updateValidator;
             _createValidator = createValidator;
+            _logger = logger;
        
         }
 
         public async Task<List<UserDto>> GetAllUsers() 
         {
+            var users = await _userRepository.GetAllAsync();
 
-            var users = await _context.Users.ToListAsync();
-
-            return users.Select(u => u.ToUserDto()).ToList();
+            return  users.Select(u => u.ToUserDto()).ToList();
 
         }
 
-        
         public async Task<UserDto> GetUserById(int id)
         {
 
-            var user = await _context.Users.FindAsync(id);
+
+            var user = await _userRepository.FindAsync(id); 
 
             if (user == null)
             {
+                _logger.LogWarning("Usuario no encontrado Id: {UsuarioId}", id);
                 throw new NotFoundException("Usuario no encontrado");
             }
 
             return user.ToUserDto();
-
 
         }
 
@@ -67,8 +74,8 @@ namespace HelpDeskAPI.Services.User
                     result.Errors.First().ErrorMessage);
             }
 
-            var exists = await _context.Users.AnyAsync(u => u.Email == userDto.Email);
-
+            var exists = await _userRepository.EmailExistsAsync(userDto.Email);
+                        
             if (exists)
             {
                 throw new BusinessException("El correo ya existe");
@@ -76,14 +83,16 @@ namespace HelpDeskAPI.Services.User
 
             var user = userDto.CreateUserDto();
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _userRepository.AddAsync(user);
 
-            return user.ToUserDto(); 
+            _logger.LogInformation("Usuario creado con exito.");
+            return user.ToUserDto();
         }
 
         public async Task<UserDto> UpdateUser(int id, UpdateUserDto userDto)
         {
+
+            _logger.LogInformation("Actualizando usuario Id: {UsuarioId}",id);
 
             var result = await _updateValidator.ValidateAsync(userDto);
 
@@ -93,17 +102,19 @@ namespace HelpDeskAPI.Services.User
                     result.Errors.First().ErrorMessage);
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.FindAsync(id);
 
             if (user == null)
             {
+                _logger.LogWarning("Usuario no encontrado Id: {UsuarioId}", id);
                 throw new NotFoundException("Usuario no encontrado");
             }
 
-            var emailExists = await _context.Users.AnyAsync(x => x.Email == userDto.Email && x.Id != id);
+            var emailExists = await _userRepository.EmailExistsAsync(userDto.Email,id);
 
             if (emailExists)
             {
+                _logger.LogInformation("El email ya está en uso al usuario");
                 throw new BusinessException("El email ya está en uso");
             }
 
@@ -115,23 +126,27 @@ namespace HelpDeskAPI.Services.User
 
             //EF hace:
             //Detecta cambios en obj → genera UPDATE SQL → ejecuta en DB
-            await _context.SaveChangesAsync();
 
+            await _userRepository.UpdateAsync(user);
+
+            _logger.LogInformation("Usuario actualizado con exito");
             return user.ToUserDto();
         }
 
         public async Task DeleteUser(int id)
         {
-
-            var user = await _context.Users.FindAsync(id);
+            
+            var user = await _userRepository.FindAsync(id);
 
             if (user == null)
             {
+                _logger.LogWarning("Usuario no encontrado para eliminar Id: {UsuarioId}", id);
                 throw new NotFoundException("Usuario no encontrado");
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            await _userRepository.DeleteAsync(id);
+
+            _logger.LogInformation("Usuario eliminado correctamente Id: {UsuarioId}", id);
         }
     }
 }

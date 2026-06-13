@@ -1,7 +1,9 @@
 using FluentValidation;
 using HelpDeskAPI.Data;
+using HelpDeskAPI.Interfaces.Repositories;
 using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Middlewares;
+using HelpDeskAPI.Repositories.Users;
 using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.TicketsComments;
 using HelpDeskAPI.Services.TicketsPriority;
@@ -45,6 +47,8 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketCommentService, TicketCommentService>();
 builder.Services.AddScoped<ITicketStatusService, TicketStatusService>();
 builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // asi se usa sin interfaz, cuando controller llama directamente a service
 //builder.Services.AddScoped<UserService>();

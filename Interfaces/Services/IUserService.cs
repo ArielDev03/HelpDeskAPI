@@ -21,7 +21,7 @@ namespace HelpDeskAPI.Interfaces.Services
         Task<List<UserDto>> GetAllUsers();
         Task<UserDto> GetUserById(int id);
         Task<UserDto> CreateUser(CreateUserDto dto);
-        Task<UserDto> UpdateUser(int id, UpdateUserDto dto); 
+        Task<UserDto> UpdateUser(int id, UpdateUserDto dto);
         Task DeleteUser(int ido);
     }
 }

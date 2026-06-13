@@ -1,4 +1,5 @@
-﻿using HelpDeskAPI.Models.Users;
+﻿using HelpDeskAPI.DTOs.User;
+using HelpDeskAPI.Models.Users;
 
 namespace HelpDeskAPI.Interfaces.Repositories
 {
@@ -9,14 +10,17 @@ namespace HelpDeskAPI.Interfaces.Repositories
 
         Task AddAsync(User user);
 
-        void Update(User user);
+        Task<User?> FindAsync(int id);
+        
+        Task UpdateAsync(User user);
 
-        void Delete(User user);
+        Task DeleteAsync(int id);
 
         Task<bool> ExistsAsync(int id);
 
-        Task<bool> EmailExistsAsync(string email);
+        Task<bool> EmailExistsAsync(string email, int? excludeId = null);
 
         Task SaveChangesAsync();
+        
     }
 }

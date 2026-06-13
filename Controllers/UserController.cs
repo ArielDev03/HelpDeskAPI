@@ -1,6 +1,7 @@
 ﻿using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.User;
 using HelpDeskAPI.Interfaces.Services;
+using HelpDeskAPI.Models.Tickets;
 using HelpDeskAPI.Models.Users;
 using HelpDeskAPI.Services.User;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -36,8 +37,8 @@ namespace HelpDeskAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDto userDto) 
-        { 
+        public async Task<IActionResult> CreateUser(CreateUserDto userDto)
+        {
             var user = await _userService.CreateUser(userDto);
 
             return Ok(user);
@@ -48,7 +49,10 @@ namespace HelpDeskAPI.Controllers
         {
             var user = await _userService.UpdateUser(id, userDto);
 
-            return Ok(user);
+            return CreatedAtAction(
+                 nameof(GetUserId),
+                 new { id = user.Id },
+                 user);
         }
 
         [HttpDelete("{id}")]
