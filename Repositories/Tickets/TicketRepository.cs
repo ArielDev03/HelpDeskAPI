@@ -19,6 +19,7 @@ namespace HelpDeskAPI.Repositories.Tickets
         public async Task<List<Ticket>> GetAllAsync()
         {
             return await _context.Tickets
+                .AsNoTracking()
                 .Include(t => t.Estado)
                 .Include(t => t.Prioridad)
                 .Include(t => t.Usuario)
@@ -29,6 +30,7 @@ namespace HelpDeskAPI.Repositories.Tickets
         public async Task<Ticket?> GetByIdAsync(int id)
         {
             return await _context.Tickets
+                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
@@ -36,6 +38,7 @@ namespace HelpDeskAPI.Repositories.Tickets
         {
             //consulta anidada
             return await _context.Tickets
+                .AsNoTracking()
                 .Include(t => t.Estado)
                 .Include(t => t.Prioridad)
                 .Include(t => t.Usuario)
@@ -77,6 +80,7 @@ namespace HelpDeskAPI.Repositories.Tickets
         public async Task<Ticket?> GetTicketCreatedAsync(int id)
         {
             return await _context.Tickets
+                .AsNoTracking()
                 .Include(t => t.Estado)
                 .Include(t => t.Prioridad)
                 .Include(t => t.Usuario)

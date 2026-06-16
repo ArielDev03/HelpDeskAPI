@@ -17,7 +17,6 @@ namespace HelpDeskAPI.Services.Tickets
     public class TicketService : ITicketService
 
     {
-        private readonly AppDbContext _context;
         private readonly ITicketRepository _ticketRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILogger<TicketService> _logger;
@@ -25,7 +24,7 @@ namespace HelpDeskAPI.Services.Tickets
         private readonly IValidator<UpdateTicketDto> _updateValidator;
         
 
-        public TicketService(AppDbContext context,
+        public TicketService(
             ITicketRepository ticketRepository,
             IUserRepository userRepository,
             ILogger<TicketService> logger,
@@ -33,7 +32,6 @@ namespace HelpDeskAPI.Services.Tickets
             IValidator<CreateTicketDto> createValidator)
 
         {
-            _context = context;
             _ticketRepository = ticketRepository;
             _userRepository = userRepository;
             _logger = logger;

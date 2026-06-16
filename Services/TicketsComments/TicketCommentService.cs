@@ -1,29 +1,34 @@
 ﻿using FluentValidation;
-using HelpDeskAPI.Data;
-using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.DTOs.TicketsComments;
 using HelpDeskAPI.Exceptions;
 using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Mappers.TicketsComments;
 using HelpDeskAPI.Models.TicketComments;
-using Microsoft.EntityFrameworkCore;
+using HelpDeskAPI.Interfaces.Repositories;
 
 namespace HelpDeskAPI.Services.TicketsComments
 {
     public class TicketCommentService : ITicketCommentService
     {
-        private readonly AppDbContext _context;
+        private readonly ITicketCommentRepository _ticketCommentRepository;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<TicketCommentService> _logger;
         private readonly IValidator<CreateTicketCommentDto> _createValidator;
 
 
-
-        public TicketCommentService(AppDbContext context,
+        public TicketCommentService(
+            ITicketCommentRepository ticketCommentRepository,
+            IUserRepository userRepository,
+            ITicketRepository ticketRepository,
             ILogger<TicketCommentService> logger,
             IValidator<CreateTicketCommentDto> createValidator)
 
         {
-            _context = context;
+
+            _ticketCommentRepository = ticketCommentRepository;
+            _ticketRepository = ticketRepository;
+            _userRepository = userRepository;
             _logger = logger;
             _createValidator = createValidator;
         }
@@ -32,20 +37,16 @@ namespace HelpDeskAPI.Services.TicketsComments
         {
             _logger.LogInformation("Obteniendo todos los comentarios del ticket: {TicketId}", id);
 
-            var ticketExiste = await _context.Tickets
-                .AnyAsync(t => t.Id == id); //AnyAsync(): valida que si existe
+            var ticketExists = await _ticketRepository.ExistsAsync(id);
 
-            if (!ticketExiste)
+            if (!ticketExists)
             {
                 _logger.LogWarning("Ticket {TicketId} no encontrado", id);
 
                 throw new NotFoundException("Ticket no encontrado");
             }
 
-            var ticketsComments = await _context.TicketComments
-                .Where(tc => tc.TicketId == id)
-                .Include(tc => tc.Usuario)
-                .ToListAsync();
+            var ticketsComments = await _ticketCommentRepository.GetByTicketIdAsync(id);
 
             return ticketsComments
                    .Select(tc => tc.ToTicketCommentDto())
@@ -65,17 +66,15 @@ namespace HelpDeskAPI.Services.TicketsComments
                     result.Errors.First().ErrorMessage);
             }
 
-            var ticketExiste = await _context.Tickets
-                .AnyAsync(t => t.Id == id); //AnyAsync(): valida que si existe
-
-            if (!ticketExiste)
+            var ticketExists = await _ticketRepository.ExistsAsync(id);
+            if (!ticketExists)
             {
                 _logger.LogWarning("Ticket {TicketId} no encontrado", id);
 
                 throw new NotFoundException("Ticket no encontrado");
             }
 
-            var userExiste = await _context.Users.AnyAsync(t => t.Id == dto.UsuarioId);
+            var userExiste = await _userRepository.ExistsAsync(dto.UsuarioId);
 
             if (!userExiste)
             {
@@ -83,17 +82,21 @@ namespace HelpDeskAPI.Services.TicketsComments
                 throw new NotFoundException("Usuario no encontrado");
             }
 
-            var comment = dto.CreateTicketCommentDto(id); 
+            var comment = dto.CreateTicketCommentDto(id);
 
-            _context.TicketComments.Add(comment);
+            await _ticketCommentRepository.AddAsync(comment);
 
-            await _context.SaveChangesAsync();
+            await _ticketCommentRepository.SaveChangesAsync();
 
             _logger.LogInformation("Comentario del ticket creado con ID: {TicketId}", id);
 
-            var commentDb = await _context.TicketComments
-                .Include(t => t.Usuario)
-                .FirstAsync(t => t.Id == comment.Id);
+            var commentDb = await _ticketCommentRepository.GetByIdAsync(comment.Id);
+
+            if (commentDb is null)
+            {
+                _logger.LogWarning("Comentario no encontrado. ID: {commentId}", comment.Id);
+                throw new NotFoundException("Comentario no encontrado");
+            }
 
             return commentDb.ToTicketCommentDto();
         }

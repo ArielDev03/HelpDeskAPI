@@ -17,12 +17,15 @@ namespace HelpDeskAPI.Repositories.Users
 
         public async Task<List<User>> GetAllAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<User?> GetByIdAsync(int id)
         {
             return await _context.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 

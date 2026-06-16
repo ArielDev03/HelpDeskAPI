@@ -10,8 +10,6 @@ namespace HelpDeskAPI.Interfaces.Repositories
 
         Task AddAsync(TicketComment comment);
 
-        Task<bool> ExistsAsync(int id);
-
         Task SaveChangesAsync();
     }
 }
