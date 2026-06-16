@@ -32,6 +32,7 @@ namespace HelpDeskAPI.Repositories.Users
         {
             return await _context.Users.AnyAsync(t => t.Id == id);
         }
+
         public async Task<bool> EmailExistsAsync(string email, int? excludeId = null)
         {
             return await _context.Users.AnyAsync(u =>

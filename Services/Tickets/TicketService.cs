@@ -2,12 +2,15 @@
 using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.Tickets;
 using HelpDeskAPI.Exceptions;
+using HelpDeskAPI.Interfaces.Repositories;
 using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Mappers.Tickets;
 using HelpDeskAPI.Models.Tickets;
 using HelpDeskAPI.Models.Users;
+using HelpDeskAPI.Repositories.Users;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
 
 namespace HelpDeskAPI.Services.Tickets
 {
@@ -15,18 +18,24 @@ namespace HelpDeskAPI.Services.Tickets
 
     {
         private readonly AppDbContext _context;
+        private readonly ITicketRepository _ticketRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<TicketService> _logger;
         private readonly IValidator<CreateTicketDto> _createValidator;
         private readonly IValidator<UpdateTicketDto> _updateValidator;
         
 
-        public TicketService(AppDbContext context, 
+        public TicketService(AppDbContext context,
+            ITicketRepository ticketRepository,
+            IUserRepository userRepository,
             ILogger<TicketService> logger,
             IValidator<UpdateTicketDto> updateValidator,
             IValidator<CreateTicketDto> createValidator)
 
         {
             _context = context;
+            _ticketRepository = ticketRepository;
+            _userRepository = userRepository;
             _logger = logger;
             _updateValidator = updateValidator;
             _createValidator = createValidator;
@@ -36,12 +45,7 @@ namespace HelpDeskAPI.Services.Tickets
         {
             _logger.LogInformation("Obteniendo todos los tickets");
 
-            var tickets = await _context.Tickets
-                .Include(t => t.Estado)
-                .Include(t => t.Prioridad)
-                .Include(t => t.Usuario)
-                .Include(t => t.UsuarioAsignado)
-                .ToListAsync();
+            var tickets = await _ticketRepository.GetAllAsync();
 
             var ticketDtos = tickets.Select(t => t.ToTicketDto()).ToList();
 
@@ -52,16 +56,7 @@ namespace HelpDeskAPI.Services.Tickets
         {
             _logger.LogInformation("Buscando ticket {TicketId}",id);
 
-            //consulta anidada
-            var ticketDetail = await _context.Tickets
-                .Include(t => t.Estado) //Trae una relación
-                .Include(t => t.Prioridad)
-                .Include(t => t.Usuario)
-                .Include(t => t.UsuarioAsignado)
-                .Include(t => t.Comentarios)
-                .ThenInclude(c => c.Usuario) // Trae una relación de esa relación 
-                .FirstOrDefaultAsync(t => t.Id == id);
-
+            var ticketDetail = await _ticketRepository.GetDetailByIdAsync(id);
 
             if (ticketDetail == null)
             {
@@ -69,6 +64,7 @@ namespace HelpDeskAPI.Services.Tickets
 
                 throw new NotFoundException("Ticket no encontrado");
             }
+
 
             return ticketDetail.ToTicketDetailDto();
         }
@@ -86,7 +82,7 @@ namespace HelpDeskAPI.Services.Tickets
                     result.Errors.First().ErrorMessage);
             }
 
-            var user = await _context.Users.FindAsync(ticketDto.UsuarioId);
+            var user = await _userRepository.FindAsync(ticketDto.UsuarioId); 
 
             if(user == null)
             {
@@ -96,17 +92,21 @@ namespace HelpDeskAPI.Services.Tickets
 
             var ticket = ticketDto.CreateTicketDto();
 
-            _context.Tickets.Add(ticket);
 
-            await _context.SaveChangesAsync();
+            await _ticketRepository.AddAsync(ticket);
+            await _ticketRepository.SaveChangesAsync();
 
             _logger.LogInformation("Ticket creado con ID: {TicketId}", ticket.Id);
 
-            var ticketDb = await _context.Tickets
-                .Include(t => t.Estado)
-                .Include(t => t.Prioridad)
-                .Include(t => t.Usuario)
-                .FirstAsync(t => t.Id == ticket.Id);
+
+            var ticketDb = await _ticketRepository.GetTicketCreatedAsync(ticket.Id);
+
+            if (ticketDb is null)
+            {
+                _logger.LogWarning("No se pudo recuperar el ticket recién creado: {UsuarioId}", ticketDto.UsuarioId);
+                throw new NotFoundException(
+                    "No se pudo recuperar el ticket recién creado");
+            }
 
             return ticketDb.ToTicketDto();
         }
@@ -123,7 +123,7 @@ namespace HelpDeskAPI.Services.Tickets
                     validationResult.Errors.First().ErrorMessage);
             }
 
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
@@ -133,8 +133,7 @@ namespace HelpDeskAPI.Services.Tickets
 
             if (ticketDto.UsuarioAsignadoId.HasValue)
             {
-                var usuarioExiste = await _context.Users
-                    .AnyAsync(u => u.Id == ticketDto.UsuarioAsignadoId);
+                var usuarioExiste = await _userRepository.ExistsAsync(ticketDto.UsuarioAsignadoId.Value);
 
                 if (!usuarioExiste)
                 {
@@ -144,8 +143,8 @@ namespace HelpDeskAPI.Services.Tickets
             }
 
             // AnyAsyncv No trae registros. ¿Existe? Sí o No
-            var estadoExiste = await _context.TicketStatuses
-                .AnyAsync(e => e.Id == ticketDto.EstadoId);
+            var estadoExiste = await _ticketRepository
+            .StatusExistsAsync(ticketDto.EstadoId);
 
             if (!estadoExiste)
             {
@@ -153,8 +152,8 @@ namespace HelpDeskAPI.Services.Tickets
                 throw new BusinessException("Estado no válido");
             }
 
-            var prioridadExiste = await _context.TicketPriorities
-                .AnyAsync(p => p.Id == ticketDto.PrioridadId);
+            var prioridadExiste = await _ticketRepository
+            .PriorityExistsAsync(ticketDto.PrioridadId);
 
             if (!prioridadExiste)
             {
@@ -168,7 +167,7 @@ namespace HelpDeskAPI.Services.Tickets
             ticket.PrioridadId = ticketDto.PrioridadId;
             ticket.UsuarioAsignadoId = ticketDto.UsuarioAsignadoId;
 
-            await _context.SaveChangesAsync();
+            await _ticketRepository.UpdateAsync(ticket);
 
         }
 
@@ -176,8 +175,7 @@ namespace HelpDeskAPI.Services.Tickets
         {
             _logger.LogInformation("Eliminando ticket {TicketId}",id);
 
-            var ticket = await _context.Tickets
-                .FirstOrDefaultAsync(t => t.Id == id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
@@ -191,9 +189,7 @@ namespace HelpDeskAPI.Services.Tickets
                 throw new BusinessException("Solo se pueden eliminar tickets cerrados");
             }
 
-            _context.Tickets.Remove(ticket);
-
-            await _context.SaveChangesAsync();
+            await _ticketRepository.DeleteAsync(ticket);
 
             _logger.LogInformation("Ticket eliminado correctamente. TicketId: {TicketId}",id);
         }

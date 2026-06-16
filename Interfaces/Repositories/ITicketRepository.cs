@@ -8,14 +8,25 @@ namespace HelpDeskAPI.Interfaces.Repositories
 
         Task<Ticket?> GetByIdAsync(int id);
 
+        Task<Ticket?> GetDetailByIdAsync(int id);
+
         Task AddAsync(Ticket ticket);
 
-        void Update(Ticket ticket);
-
-        void Delete(Ticket ticket);
+        Task UpdateAsync(Ticket ticket);
 
         Task<bool> ExistsAsync(int id);
 
+        Task DeleteAsync(Ticket ticket);
+
+
         Task SaveChangesAsync();
+
+        Task<Ticket?> GetTicketCreatedAsync(int id);
+
+
+        //temporales 
+        Task<bool> StatusExistsAsync(int statusId);
+
+        Task<bool> PriorityExistsAsync(int priorityId);
     }
 }

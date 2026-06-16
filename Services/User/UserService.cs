@@ -18,7 +18,7 @@ namespace HelpDeskAPI.Services.User
     
     public class UserService : IUserService
     {
-        private readonly AppDbContext _context;
+       // private readonly AppDbContext _context;
         private readonly IUserRepository _userRepository;
         private readonly IValidator<CreateUserDto> _createValidator;
         private readonly IValidator<UpdateUserDto> _updateValidator;
@@ -31,7 +31,7 @@ namespace HelpDeskAPI.Services.User
             ILogger<UserService> logger)
             
         {
-            _context = context;
+           // _context = context;
             _userRepository = userRepository;
             _updateValidator = updateValidator;
             _createValidator = createValidator;
