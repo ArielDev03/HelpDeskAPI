@@ -6,6 +6,5 @@ namespace HelpDeskAPI.Interfaces.Repositories
     {
         Task<List<TicketPriority>> GetAllAsync();
 
-        Task<bool> ExistsAsync(int id);
     }
 }

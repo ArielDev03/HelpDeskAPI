@@ -1,20 +1,21 @@
 ﻿using HelpDeskAPI.Data;
 using HelpDeskAPI.DTOs.Status;
+using HelpDeskAPI.Interfaces.Repositories;
 using HelpDeskAPI.Interfaces.Services;
-using HelpDeskAPI.Services.TicketsComments;
+using HelpDeskAPI.Repositories.TicketsStatus;
 using Microsoft.EntityFrameworkCore;
 
 namespace HelpDeskAPI.Services.TicketStatus
 {
     public class TicketStatusService : ITicketStatusService
     {
-        private readonly AppDbContext _context;
+        private readonly ITicketStatusRepository _ticketStatusRepository;
         private readonly ILogger<TicketStatusService> _logger;
 
-        public TicketStatusService(AppDbContext context,
+        public TicketStatusService(ITicketStatusRepository ticketStatusRepository,
             ILogger<TicketStatusService> logger)
         {
-            _context = context;
+            _ticketStatusRepository = ticketStatusRepository;
             _logger = logger;
         }
 
@@ -22,13 +23,15 @@ namespace HelpDeskAPI.Services.TicketStatus
         {
             _logger.LogInformation("Obteniendo todos los estados del ticket");
 
-            return await _context.TicketStatuses
+            var statuses = await _ticketStatusRepository.GetAllAsync();
+
+            return statuses
                 .Select(s => new TicketStatusDto
                 {
                     Id = s.Id,
                     Nombre = s.Nombre
                 })
-                .ToListAsync();
+                .ToList();
         }
     }
 }

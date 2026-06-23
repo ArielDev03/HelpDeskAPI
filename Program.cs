@@ -5,6 +5,8 @@ using HelpDeskAPI.Interfaces.Services;
 using HelpDeskAPI.Middlewares;
 using HelpDeskAPI.Repositories.Tickets;
 using HelpDeskAPI.Repositories.TicketsCommentRepository;
+using HelpDeskAPI.Repositories.TicketsRepository;
+using HelpDeskAPI.Repositories.TicketsStatus;
 using HelpDeskAPI.Repositories.Users;
 using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.TicketsComments;
@@ -53,6 +55,8 @@ builder.Services.AddScoped<ITicketPriorityService, TicketPriorityService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>(); 
 builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
+builder.Services.AddScoped<ITicketStatusRepository,TicketStatusRepository>();
+builder.Services.AddScoped<ITicketPriorityRepository, TicketPriorityRepository>(); 
 
 // asi se usa sin interfaz, cuando controller llama directamente a service
 //builder.Services.AddScoped<UserService>();
