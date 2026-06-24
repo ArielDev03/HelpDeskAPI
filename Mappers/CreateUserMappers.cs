@@ -23,7 +23,7 @@ namespace HelpDeskAPI.Mappers
             {
                 Name = userDto.Name,
                 Email = userDto.Email,
-                Password = userDto.Password,
+                PasswordHash = userDto.Password,
                 Edad = userDto.Edad,
                 Direccion = userDto.Direccion,
                 Ciudad = userDto.Ciudad
