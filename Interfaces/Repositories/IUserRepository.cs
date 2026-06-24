@@ -21,6 +21,8 @@ namespace HelpDeskAPI.Interfaces.Repositories
         Task<bool> EmailExistsAsync(string email, int? excludeId = null);
 
         Task SaveChangesAsync();
-        
+
+        Task<User?> GetByEmailAsync(string email);
+
     }
 }

@@ -8,6 +8,7 @@ using HelpDeskAPI.Repositories.TicketsCommentRepository;
 using HelpDeskAPI.Repositories.TicketsRepository;
 using HelpDeskAPI.Repositories.TicketsStatus;
 using HelpDeskAPI.Repositories.Users;
+using HelpDeskAPI.Services.Auth;
 using HelpDeskAPI.Services.Tickets;
 using HelpDeskAPI.Services.TicketsComments;
 using HelpDeskAPI.Services.TicketsPriority;
@@ -56,7 +57,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>(); 
 builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
 builder.Services.AddScoped<ITicketStatusRepository,TicketStatusRepository>();
-builder.Services.AddScoped<ITicketPriorityRepository, TicketPriorityRepository>(); 
+builder.Services.AddScoped<ITicketPriorityRepository, TicketPriorityRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // asi se usa sin interfaz, cuando controller llama directamente a service
 //builder.Services.AddScoped<UserService>();

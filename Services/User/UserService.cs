@@ -79,7 +79,10 @@ namespace HelpDeskAPI.Services.User
                 throw new BusinessException("El correo ya existe");
             }
 
+
             var user = userDto.CreateUserDto();
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
             await _userRepository.AddAsync(user);
 
